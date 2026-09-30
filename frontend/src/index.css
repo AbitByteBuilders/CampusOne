@@ -219,7 +219,7 @@ nav {
 .role-switch button.selected {
   background: white;
   color: #2859d9;
-  box-shadow: 0 1px 4px rgba(0,0,0,.1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* ================= PAGE ================= */
@@ -573,7 +573,6 @@ nav {
 /* ================= RESPONSIVE ================= */
 
 @media (max-width: 1000px) {
-
   .stats-grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -581,11 +580,9 @@ nav {
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
-
 }
 
 @media (max-width: 750px) {
-
   .sidebar {
     width: 70px;
     padding: 15px 8px;
