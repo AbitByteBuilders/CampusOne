@@ -1,14 +1,4 @@
 import { useState } from "react";
-import StudentDashboard from "./pages/student/StudentDashboard";
-import HostelComplaints from "./pages/student/HostelComplaints";
-import Fees from "./pages/student/Fees";
-import Notices from "./pages/student/Notices";
-import Settings from "./pages/student/Settings";
-
-import Attendance from "./pages/shared/Attendance";
-import Timetable from "./pages/shared/Timetable";
-import Requests from "./pages/shared/Requests";
-import MessMenu from "./pages/shared/MessMenu";
 
 function App() {
   const [role, setRole] = useState("student");
@@ -91,12 +81,7 @@ function App() {
         </nav>
 
         <div className="sidebar-bottom">
-          <button
-            className="nav-item"
-            onClick={() => setActivePage("Settings")}
-          >
-            ⚙️ Settings
-          </button>
+          <button className="nav-item">⚙️ Settings</button>
 
           {/* ⭐ CHANGED: ADMIN USER INFORMATION ADDED */}
           <div className="sidebar-user">
@@ -225,31 +210,143 @@ function App() {
           )}
 
           {/* ================= OTHER PAGES ================= */}
-          {activePage !== "Dashboard" &&
-            (role === "student" ? (
-              activePage === "Attendance" ? (
-                <Attendance />
-              ) : activePage === "Timetable" ? (
-                <Timetable />
-              ) : activePage === "Requests" ? (
-                <Requests />
-              ) : activePage === "Hostel" ? (
-                <HostelComplaints />
-              ) : activePage === "Mess" ? (
-                <MessMenu />
-              ) : activePage === "Notices" ? (
-                <Notices />
-              ) : activePage === "Fees" ? (
-                <Fees />
-              ) : activePage === "Settings" ? (
-                <Settings />
-              ) : null
-            ) : (
-              <PageContent page={activePage} role={role} />
-            ))}
+          {activePage !== "Dashboard" && (
+            <PageContent page={activePage} role={role} />
+          )}
         </section>
       </main>
     </div>
+  );
+}
+
+/* =========================================================
+   STUDENT DASHBOARD
+========================================================= */
+
+function StudentDashboard() {
+  return (
+    <>
+      <div className="stats-grid">
+        <Stat icon="📊" title="Attendance" value="82%" extra="Good standing" />
+
+        <Stat
+          icon="📄"
+          title="Active Requests"
+          value="3"
+          extra="1 awaiting approval"
+        />
+
+        <Stat icon="🔧" title="Complaints" value="1" extra="Being resolved" />
+
+        <Stat
+          icon="💳"
+          title="Fees Due"
+          value="₹12,500"
+          extra="Due this semester"
+        />
+      </div>
+
+      <div className="dashboard-grid">
+        <div className="panel">
+          <div className="panel-header">
+            <div>
+              <h2>Quick Actions</h2>
+              <p>Common student services</p>
+            </div>
+          </div>
+
+          <div className="quick-grid">
+            <Quick icon="📄" title="Bonafide Certificate" />
+
+            <Quick icon="🚪" title="Gate Pass" />
+
+            <Quick icon="📝" title="Leave Request" />
+
+            <Quick icon="🔧" title="Hostel Complaint" />
+          </div>
+        </div>
+
+        <div className="panel">
+          <div className="panel-header">
+            <div>
+              <h2>Today's Schedule</h2>
+              <p>5th Semester • CSE</p>
+            </div>
+
+            <span className="view-link">View all</span>
+          </div>
+
+          <div className="schedule-item">
+            <div className="time">09:00</div>
+
+            <div>
+              <strong>Computer Networks</strong>
+              <p>Room 302 • Prof. Sharma</p>
+            </div>
+          </div>
+
+          <div className="schedule-item">
+            <div className="time">11:00</div>
+
+            <div>
+              <strong>Operating Systems</strong>
+              <p>Lab 2 • Prof. Das</p>
+            </div>
+          </div>
+
+          <div className="schedule-item">
+            <div className="time">02:00</div>
+
+            <div>
+              <strong>Web Development</strong>
+              <p>Room 205 • Prof. Patnaik</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="dashboard-grid">
+        <div className="panel">
+          <div className="panel-header">
+            <div>
+              <h2>Recent Requests</h2>
+              <p>Track your applications</p>
+            </div>
+
+            <span className="view-link">View all</span>
+          </div>
+
+          <Request
+            title="Bonafide Certificate"
+            date="24 Sep 2026"
+            status="Pending"
+          />
+
+          <Request
+            title="Hostel Complaint"
+            date="22 Sep 2026"
+            status="In Progress"
+          />
+
+          <Request title="Leave Request" date="20 Sep 2026" status="Approved" />
+        </div>
+
+        <div className="panel">
+          <div className="panel-header">
+            <div>
+              <h2>Latest Notices</h2>
+              <p>Important campus updates</p>
+            </div>
+          </div>
+
+          <Notice title="Mid Semester Examination Schedule" date="Today" />
+
+          <Notice title="Fee payment deadline extended" date="Yesterday" />
+
+          <Notice title="Cultural Fest registrations open" date="2 days ago" />
+        </div>
+      </div>
+    </>
   );
 }
 
