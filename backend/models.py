@@ -69,6 +69,28 @@ class AttendanceRecord(db.Model):
             "percentage": round(percentage, 1),
             "status": status
         }    
+
+class ClassSchedule(db.Model):
+    __tablename__ = 'class_schedules'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    day = db.Column(db.String(20), nullable=False)
+    time_slot = db.Column(db.String(20), nullable=False)
+    subject = db.Column(db.String(100), nullable=False)
+    room = db.Column(db.String(50), nullable=False)
+    professor = db.Column(db.String(100), nullable=False)
+    class_type = db.Column(db.String(20), default="Lecture")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "day": self.day,
+            "time": self.time_slot,
+            "subject": self.subject,
+            "room": self.room,
+            "professor": self.professor,
+            "type": self.class_type
+        }
 # ==============================================================================
 # MOCK DATA SEEDER
 # ==============================================================================
@@ -101,5 +123,20 @@ def seed_mock_data():
             AttendanceRecord(subject="Operating Systems", total_classes=38, attended_classes=32), # 84.2%
             AttendanceRecord(subject="Web Development", total_classes=42, attended_classes=28),   # 66.6% (Triggers Shortage)
             AttendanceRecord(subject="Database Systems", total_classes=35, attended_classes=30)   # 85.7%
+        ])
+        db.session.commit()
+        
+# Inside seed_mock_data()...
+    if ClassSchedule.query.first() is None:
+        db.session.add_all([
+            # Monday Classes
+            ClassSchedule(day="Monday", time_slot="09:00 AM", subject="Computer Networks", room="Room 302", professor="Prof. Sharma", class_type="Lecture"),
+            ClassSchedule(day="Monday", time_slot="11:00 AM", subject="Operating Systems", room="Lab 2", professor="Prof. Das", class_type="Lab"),
+            ClassSchedule(day="Monday", time_slot="02:00 PM", subject="Web Development", room="Room 205", professor="Prof. Patnaik", class_type="Lecture"),
+            
+            # Tuesday Classes
+            ClassSchedule(day="Tuesday", time_slot="09:00 AM", subject="Database Systems", room="Room 304", professor="Prof. Mishra", class_type="Lecture"),
+            ClassSchedule(day="Tuesday", time_slot="10:30 AM", subject="Cloud Computing", room="Room 301", professor="Prof. Reddy", class_type="Lecture"),
+            ClassSchedule(day="Tuesday", time_slot="02:00 PM", subject="Web Development", room="Lab 3", professor="Prof. Patnaik", class_type="Lab")
         ])
         db.session.commit()

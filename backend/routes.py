@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from models import db, Complaint, StudentRequest, AttendanceRecord
+from models import db, Complaint, StudentRequest, AttendanceRecord, ClassSchedule
 from twilio.twiml.messaging_response import MessagingResponse
 
 api_routes = Blueprint('api_routes', __name__)
@@ -56,6 +56,19 @@ def create_complaint():
 def get_complaints():
     complaints = Complaint.query.all()
     return jsonify([c.to_dict() for c in complaints]), 200
+
+@api_routes.route('/timetable', methods=['GET'])
+def get_timetable():
+    # If the frontend asks for a specific day (e.g., /api/timetable?day=Monday)
+    day_filter = request.args.get('day')
+    
+    if day_filter:
+        classes = ClassSchedule.query.filter_by(day=day_filter).all()
+    else:
+        # Otherwise return the entire week
+        classes = ClassSchedule.query.all()
+        
+    return jsonify([c.to_dict() for c in classes]), 200
 
 # ==============================================================================
 # INNOVATION 1: Zero-Bandwidth SMS Webhook
