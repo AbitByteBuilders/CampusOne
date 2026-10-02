@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from models import db, Complaint, StudentRequest
+from models import db, Complaint, StudentRequest, AttendanceRecord
 from twilio.twiml.messaging_response import MessagingResponse
 
 api_routes = Blueprint('api_routes', __name__)
@@ -91,3 +91,8 @@ def sms_webhook():
     resp = MessagingResponse()
     resp.message("CampusOne: Send 'COMPLAINT [Room] [Issue]' to log a ticket.")
     return str(resp)
+
+@api_routes.route('/attendance', methods=['GET'])
+def get_attendance():
+    records = AttendanceRecord.query.all()
+    return jsonify([record.to_dict() for record in records]), 200

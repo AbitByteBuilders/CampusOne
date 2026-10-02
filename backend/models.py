@@ -45,7 +45,30 @@ class StudentRequest(db.Model):
 
     def to_dict(self):
         return {"id": self.id, "title": self.title, "date": self.date_str, "status": self.status}
+
+
+class AttendanceRecord(db.Model):
+    __tablename__ = 'attendance'
     
+    id = db.Column(db.Integer, primary_key=True)
+    subject = db.Column(db.String(100), nullable=False)
+    total_classes = db.Column(db.Integer, nullable=False, default=0)
+    attended_classes = db.Column(db.Integer, nullable=False, default=0)
+
+    def to_dict(self):
+        # Dynamically calculate the percentage
+        percentage = (self.attended_classes / self.total_classes * 100) if self.total_classes > 0 else 0
+        # Automatically flag if attendance drops below the standard 75% requirement
+        status = "Good" if percentage >= 75 else "Shortage"
+        
+        return {
+            "id": self.id,
+            "subject": self.subject,
+            "total_classes": self.total_classes,
+            "attended_classes": self.attended_classes,
+            "percentage": round(percentage, 1),
+            "status": status
+        }    
 # ==============================================================================
 # MOCK DATA SEEDER
 # ==============================================================================
@@ -70,4 +93,13 @@ def seed_mock_data():
         req2 = StudentRequest(title="Leave Request", date_str="20 Sep 2026", status="Approved")
         db.session.add_all([req1, req2])
         
+        db.session.commit()
+    # Inside seed_mock_data()...
+    if AttendanceRecord.query.first() is None:
+        db.session.add_all([
+            AttendanceRecord(subject="Computer Networks", total_classes=40, attended_classes=35), # 87.5%
+            AttendanceRecord(subject="Operating Systems", total_classes=38, attended_classes=32), # 84.2%
+            AttendanceRecord(subject="Web Development", total_classes=42, attended_classes=28),   # 66.6% (Triggers Shortage)
+            AttendanceRecord(subject="Database Systems", total_classes=35, attended_classes=30)   # 85.7%
+        ])
         db.session.commit()
