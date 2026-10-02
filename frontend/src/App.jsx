@@ -1,3 +1,9 @@
+import { useState } from "react";
+
+import Sidebar from "./components/Sidebar";
+import Topbar from "./components/Topbar";
+import PageHeader from "./components/PageHeader";
+
 import { useState, useEffect } from "react";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import HostelComplaints from "./pages/student/HostelComplaints";
@@ -10,206 +16,42 @@ import Timetable from "./pages/shared/Timetable";
 import Requests from "./pages/shared/Requests";
 import MessMenu from "./pages/shared/MessMenu";
 
+import StaffDashboard from "./pages/staff/StaffDashboard";
+import Students from "./pages/staff/Students";
+import Complaints from "./pages/staff/Complaints";
+import Announcements from "./pages/staff/Announcements";
+
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminComplaints from "./pages/admin/Complaints";
+import Maintenance from "./pages/admin/Maintenance";
+import Rooms from "./pages/admin/Rooms";
+import Assets from "./pages/admin/Assets";
+import Mess from "./pages/admin/Mess";
+import Visitors from "./pages/admin/Visitors";
+import GateLogs from "./pages/admin/GateLogs";
+import Communication from "./pages/admin/Communication";
+import StaffWorkload from "./pages/admin/StaffWorkload";
+import Reports from "./pages/admin/Reports";
+
 function App() {
   const [role, setRole] = useState("student");
   const [activePage, setActivePage] = useState("Dashboard");
 
-  const studentMenu = [
-    ["🏠", "Dashboard"],
-    ["📊", "Attendance"],
-    ["📅", "Timetable"],
-    ["📄", "Requests"],
-    ["🏠", "Hostel"],
-    ["🍱", "Mess"],
-    ["📢", "Notices"],
-    ["💳", "Fees"],
-  ];
-
-  const staffMenu = [
-    ["📊", "Dashboard"],
-    ["👨‍🎓", "Students"],
-    ["📊", "Attendance"],
-    ["📅", "Timetable"],
-    ["📄", "Requests"],
-    ["🔧", "Complaints"],
-    ["📢", "Announcements"],
-    ["🍱", "Mess"],
-  ];
-
-  // ⭐ ADMINISTRATION MENU
-  const adminMenu = [
-    ["🏢", "Dashboard"],
-    ["📋", "Complaints"],
-    ["🔧", "Maintenance"],
-    ["🚪", "Rooms"],
-    ["📦", "Assets"],
-    ["🍽️", "Mess"],
-    ["👥", "Visitors"],
-    ["🚧", "Gate Logs"],
-    ["📢", "Communication"],
-    ["👨‍💼", "Staff Workload"],
-    ["📊", "Reports"],
-  ];
-
-  // ⭐ CHANGED: supports Student + Faculty + Admin
-  const menu =
-    role === "student" ? studentMenu : role === "staff" ? staffMenu : adminMenu;
-
   return (
     <div className="app">
-      {/* ================= SIDEBAR ================= */}
-      <aside className="sidebar">
-        <div className="brand">
-          <div className="brand-icon">C</div>
-
-          <div>
-            <h2>CampusOne</h2>
-            <span>Smart Campus</span>
-          </div>
-        </div>
-
-        {/* ⭐ CHANGED: ADMINISTRATION LABEL ADDED */}
-        <div className="portal-label">
-          {role === "student"
-            ? "STUDENT PORTAL"
-            : role === "staff"
-              ? "FACULTY & STAFF"
-              : "ADMINISTRATION"}
-        </div>
-
-        <nav>
-          {menu.map(([icon, name]) => (
-            <button
-              key={name}
-              className={`nav-item ${activePage === name ? "active" : ""}`}
-              onClick={() => setActivePage(name)}
-            >
-              <span>{icon}</span>
-              {name}
-            </button>
-          ))}
-        </nav>
-
-        <div className="sidebar-bottom">
-          <button
-            className="nav-item"
-            onClick={() => setActivePage("Settings")}
-          >
-            ⚙️ Settings
-          </button>
-
-          {/* ⭐ CHANGED: ADMIN USER INFORMATION ADDED */}
-          <div className="sidebar-user">
-            <div className="avatar">
-              {role === "student" ? "P" : role === "staff" ? "F" : "A"}
-            </div>
-
-            <div>
-              <strong>
-                {role === "student"
-                  ? "Pratyusha"
-                  : role === "staff"
-                    ? "Faculty Admin"
-                    : "Campus Admin"}
-              </strong>
-
-              <small>
-                {role === "student"
-                  ? "Student"
-                  : role === "staff"
-                    ? "Faculty"
-                    : "Administrator"}
-              </small>
-            </div>
-          </div>
-        </div>
-      </aside>
+      <Sidebar
+        role={role}
+        activePage={activePage}
+        setActivePage={setActivePage}
+      />
 
       {/* ================= MAIN CONTENT ================= */}
       <main className="main">
-        {/* ================= TOPBAR ================= */}
-        <header className="topbar">
-          <div className="mobile-brand">CampusOne</div>
-
-          <div className="search-box">
-            🔍
-            <input placeholder="Search anything..." />
-          </div>
-
-          <div className="top-actions">
-            <button className="icon-button">
-              🔔
-              <span className="notification-dot"></span>
-            </button>
-
-            {/* ⭐ CHANGED: ADMIN BUTTON ADDED */}
-            <div className="role-switch">
-              <button
-                className={role === "student" ? "selected" : ""}
-                onClick={() => {
-                  setRole("student");
-                  setActivePage("Dashboard");
-                }}
-              >
-                Student
-              </button>
-
-              <button
-                className={role === "staff" ? "selected" : ""}
-                onClick={() => {
-                  setRole("staff");
-                  setActivePage("Dashboard");
-                }}
-              >
-                Faculty
-              </button>
-
-              <button
-                className={role === "admin" ? "selected" : ""}
-                onClick={() => {
-                  setRole("admin");
-                  setActivePage("Dashboard");
-                }}
-              >
-                Admin
-              </button>
-            </div>
-          </div>
-        </header>
+        <Topbar role={role} setRole={setRole} setActivePage={setActivePage} />
 
         {/* ================= PAGE ================= */}
         <section className="page">
-          {/* ================= PAGE HEADER ================= */}
-          <div className="page-header">
-            <div>
-              <div className="breadcrumb">CampusOne / {activePage}</div>
-
-              {/* ⭐ CHANGED: ADMIN DASHBOARD TITLE ADDED */}
-              <h1>
-                {activePage === "Dashboard"
-                  ? role === "student"
-                    ? "Good morning, Pratyusha 👋"
-                    : role === "staff"
-                      ? "Faculty Dashboard"
-                      : "Administration Dashboard"
-                  : activePage}
-              </h1>
-
-              {/* ⭐ CHANGED: ADMIN DESCRIPTION ADDED */}
-              <p>
-                {role === "student"
-                  ? "Everything you need for your campus life."
-                  : role === "staff"
-                    ? "Manage students, academics and campus operations."
-                    : "Manage campus facilities, complaints and administration."}
-              </p>
-            </div>
-
-            {/* ⭐ CHANGED: ADMIN CAN ALSO ADD/MODIFY */}
-            {(role === "staff" || role === "admin") && (
-              <button className="primary-button">+ Add New</button>
-            )}
-          </div>
+          <PageHeader role={role} activePage={activePage} />
 
           {/* ================= DASHBOARD ================= */}
           {activePage === "Dashboard" && (
@@ -227,6 +69,7 @@ function App() {
           {/* ================= OTHER PAGES ================= */}
           {activePage !== "Dashboard" &&
             (role === "student" ? (
+              /* ================= STUDENT PAGES ================= */
               activePage === "Attendance" ? (
                 <Attendance />
               ) : activePage === "Timetable" ? (
@@ -244,9 +87,45 @@ function App() {
               ) : activePage === "Settings" ? (
                 <Settings />
               ) : null
-            ) : (
-              <PageContent page={activePage} role={role} />
-            ))}
+            ) : role === "staff" ? (
+              /* ================= STAFF PAGES ================= */
+              activePage === "Students" ? (
+                <Students />
+              ) : activePage === "Attendance" ? (
+                <Attendance />
+              ) : activePage === "Timetable" ? (
+                <Timetable />
+              ) : activePage === "Requests" ? (
+                <Requests />
+              ) : activePage === "Complaints" ? (
+                <Complaints />
+              ) : activePage === "Announcements" ? (
+                <Announcements />
+              ) : activePage === "Mess" ? (
+                <MessMenu />
+              ) : null
+            ) : /* ================= ADMIN PAGES ================= */
+            activePage === "Complaints" ? (
+              <AdminComplaints />
+            ) : activePage === "Maintenance" ? (
+              <Maintenance />
+            ) : activePage === "Rooms" ? (
+              <Rooms />
+            ) : activePage === "Assets" ? (
+              <Assets />
+            ) : activePage === "Mess" ? (
+              <Mess />
+            ) : activePage === "Visitors" ? (
+              <Visitors />
+            ) : activePage === "Gate Logs" ? (
+              <GateLogs />
+            ) : activePage === "Communication" ? (
+              <Communication />
+            ) : activePage === "Staff Workload" ? (
+              <StaffWorkload />
+            ) : activePage === "Reports" ? (
+              <Reports />
+            ) : null)}
         </section>
       </main>
     </div>
