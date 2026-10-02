@@ -1,80 +1,36 @@
-function Stat({ icon, title, value, extra }) {
-  return (
-    <div className="stat-card">
-      <div className="stat-icon">{icon}</div>
+import StatCard from "../../components/StatCard";
+import QuickAction from "../../components/QuickAction";
+import RequestItem from "../../components/RequestItem";
+import NoticeItem from "../../components/NoticeItem";
 
-      <div>
-        <span>{title}</span>
-        <h2>{value}</h2>
-        <small>{extra}</small>
-      </div>
-    </div>
-  );
-}
-
-function Quick({ icon, title }) {
-  return (
-    <button className="quick-card">
-      <div className="quick-icon">{icon}</div>
-      <strong>{title}</strong>
-      <span>Open →</span>
-    </button>
-  );
-}
-
-function Request({ title, date, status }) {
-  return (
-    <div className="request">
-      <div className="request-icon">📄</div>
-
-      <div className="request-info">
-        <strong>{title}</strong>
-        <span>{date}</span>
-      </div>
-
-      <Status status={status} />
-    </div>
-  );
-}
-
-function Status({ status }) {
-  return (
-    <span className={`status ${status.toLowerCase().replace(" ", "-")}`}>
-      {status}
-    </span>
-  );
-}
-
-function Notice({ title, date }) {
-  return (
-    <div className="notice">
-      <div className="notice-icon">📢</div>
-
-      <div>
-        <strong>{title}</strong>
-        <p>{date}</p>
-      </div>
-    </div>
-  );
-}
 function StudentDashboard() {
   return (
     <>
       <div className="stats-grid">
-        <Stat icon="📊" title="Attendance" value="82%" extra="Good standing" />
+        <StatCard
+          icon="📊"
+          title="Attendance"
+          value="82%"
+          extra="Good standing"
+        />
 
-        <Stat
+        <StatCard
           icon="📄"
-          title="Active Requests"
+          title="My Requests"
           value="3"
           extra="1 awaiting approval"
         />
 
-        <Stat icon="🔧" title="Complaints" value="1" extra="Being resolved" />
+        <StatCard
+          icon="🔧"
+          title="Open Complaints"
+          value="1"
+          extra="Being resolved"
+        />
 
-        <Stat
+        <StatCard
           icon="💳"
-          title="Fees Due"
+          title="Pending Fees"
           value="₹12,500"
           extra="Due this semester"
         />
@@ -84,26 +40,23 @@ function StudentDashboard() {
         <div className="panel">
           <div className="panel-header">
             <div>
-              <h2>Quick Actions</h2>
-              <p>Common student services</p>
+              <h2>Student Services</h2>
+              <p>Frequently used campus services</p>
             </div>
           </div>
 
           <div className="quick-grid">
-            <Quick icon="📄" title="Bonafide Certificate" />
-
-            <Quick icon="🚪" title="Gate Pass" />
-
-            <Quick icon="📝" title="Leave Request" />
-
-            <Quick icon="🔧" title="Hostel Complaint" />
+            <QuickAction icon="📄" title="Bonafide Certificate" />
+            <QuickAction icon="🚪" title="Gate Pass" />
+            <QuickAction icon="📝" title="Leave Request" />
+            <QuickAction icon="🔧" title="Hostel Complaint" />
           </div>
         </div>
 
         <div className="panel">
           <div className="panel-header">
             <div>
-              <h2>Today's Schedule</h2>
+              <h2>Today's Classes</h2>
               <p>5th Semester • CSE</p>
             </div>
 
@@ -112,7 +65,6 @@ function StudentDashboard() {
 
           <div className="schedule-item">
             <div className="time">09:00</div>
-
             <div>
               <strong>Computer Networks</strong>
               <p>Room 302 • Prof. Sharma</p>
@@ -121,7 +73,6 @@ function StudentDashboard() {
 
           <div className="schedule-item">
             <div className="time">11:00</div>
-
             <div>
               <strong>Operating Systems</strong>
               <p>Lab 2 • Prof. Das</p>
@@ -130,7 +81,6 @@ function StudentDashboard() {
 
           <div className="schedule-item">
             <div className="time">02:00</div>
-
             <div>
               <strong>Web Development</strong>
               <p>Room 205 • Prof. Patnaik</p>
@@ -143,41 +93,48 @@ function StudentDashboard() {
         <div className="panel">
           <div className="panel-header">
             <div>
-              <h2>Recent Requests</h2>
-              <p>Track your applications</p>
+              <h2>Recent Applications</h2>
+              <p>Track your submitted requests</p>
             </div>
 
             <span className="view-link">View all</span>
           </div>
 
-          <Request
+          <RequestItem
             title="Bonafide Certificate"
             date="24 Sep 2026"
             status="Pending"
           />
 
-          <Request
+          <RequestItem
             title="Hostel Complaint"
             date="22 Sep 2026"
             status="In Progress"
           />
 
-          <Request title="Leave Request" date="20 Sep 2026" status="Approved" />
+          <RequestItem
+            title="Leave Request"
+            date="20 Sep 2026"
+            status="Approved"
+          />
         </div>
 
         <div className="panel">
           <div className="panel-header">
             <div>
-              <h2>Latest Notices</h2>
-              <p>Important campus updates</p>
+              <h2>Campus Updates</h2>
+              <p>Latest important announcements</p>
             </div>
           </div>
 
-          <Notice title="Mid Semester Examination Schedule" date="Today" />
+          <NoticeItem title="Mid Semester Examination Schedule" date="Today" />
 
-          <Notice title="Fee payment deadline extended" date="Yesterday" />
+          <NoticeItem title="Fee payment deadline extended" date="Yesterday" />
 
-          <Notice title="Cultural Fest registrations open" date="2 days ago" />
+          <NoticeItem
+            title="Cultural Fest registrations open"
+            date="2 days ago"
+          />
         </div>
       </div>
     </>
