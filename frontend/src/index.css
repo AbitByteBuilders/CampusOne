@@ -539,6 +539,16 @@ nav {
   border-color: #3868e8;
   color: #3868e8;
 }
+.issue {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 15px; /* Added padding */
+  border-bottom: 1px solid #eef0f4;
+  background: #fafbfe; /* Light background to make border visible */
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
 
 /* ================= OTHER PAGES ================= */
 
