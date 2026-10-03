@@ -91,6 +91,27 @@ class ClassSchedule(db.Model):
             "professor": self.professor,
             "type": self.class_type
         }
+        
+from datetime import datetime
+
+class Notice(db.Model):
+    __tablename__ = 'notices'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=True) # Full announcement text
+    target_role = db.Column(db.String(50), default="all") # "student", "staff", "all"
+    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "content": self.content,
+            "target_role": self.target_role,
+            # Formats the date beautifully for React (e.g., "03 Oct 2026")
+            "date": self.date_posted.strftime("%d %b %Y") 
+        }
 # ==============================================================================
 # MOCK DATA SEEDER
 # ==============================================================================
@@ -138,5 +159,15 @@ def seed_mock_data():
             ClassSchedule(day="Tuesday", time_slot="09:00 AM", subject="Database Systems", room="Room 304", professor="Prof. Mishra", class_type="Lecture"),
             ClassSchedule(day="Tuesday", time_slot="10:30 AM", subject="Cloud Computing", room="Room 301", professor="Prof. Reddy", class_type="Lecture"),
             ClassSchedule(day="Tuesday", time_slot="02:00 PM", subject="Web Development", room="Lab 3", professor="Prof. Patnaik", class_type="Lab")
+        ])
+        db.session.commit()
+        
+# Inside seed_mock_data()...
+    if Notice.query.first() is None:
+        db.session.add_all([
+            Notice(title="Mid Semester Examination Schedule", content="Exams begin on the 15th. Please check your seating arrangements.", target_role="student"),
+            Notice(title="Fee payment deadline extended", content="The deadline for the 5th semester has been moved to the end of the month.", target_role="all"),
+            Notice(title="Cultural Fest registrations open", content="Sign up your clubs for the campus fest.", target_role="student"),
+            Notice(title="Mandatory Faculty Meeting", content="Meeting at 4PM in the Main Auditorium to discuss workload.", target_role="staff")
         ])
         db.session.commit()

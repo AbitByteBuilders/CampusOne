@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from models import db, Complaint, StudentRequest, AttendanceRecord, ClassSchedule
+from models import db, Complaint, StudentRequest, AttendanceRecord, ClassSchedule, Notice
 from twilio.twiml.messaging_response import MessagingResponse
 
 api_routes = Blueprint('api_routes', __name__)
@@ -109,3 +109,32 @@ def sms_webhook():
 def get_attendance():
     records = AttendanceRecord.query.all()
     return jsonify([record.to_dict() for record in records]), 200
+
+# --- GET: Fetch Notices ---
+@api_routes.route('/notices', methods=['GET'])
+def get_notices():
+    # Frontend can request specific notices (e.g., /api/notices?role=student)
+    role_filter = request.args.get('role', 'all')
+    
+    if role_filter == 'all':
+        notices = Notice.query.order_by(Notice.date_posted.desc()).all()
+    else:
+        # Returns notices specifically for this role PLUS campus-wide "all" notices
+        notices = Notice.query.filter(Notice.target_role.in_([role_filter, 'all'])).order_by(Notice.date_posted.desc()).all()
+        
+    return jsonify([n.to_dict() for n in notices]), 200
+
+# --- POST: Create a New Notice ---
+@api_routes.route('/notices', methods=['POST'])
+def create_notice():
+    data = request.get_json()
+    new_notice = Notice(
+        title=data['title'],
+        content=data.get('content', ''),
+        target_role=data.get('target_role', 'all')
+    )
+    
+    db.session.add(new_notice)
+    db.session.commit()
+    
+    return jsonify({"message": "Announcement posted!", "notice": new_notice.to_dict()}), 201
