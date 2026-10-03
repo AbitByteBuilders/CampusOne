@@ -1,4 +1,4 @@
-function Topbar({ role, setRole, setActivePage }) {
+function Topbar({ onLogout }) {
   return (
     <header className="topbar">
       <div className="mobile-brand">CampusOne</div>
@@ -14,37 +14,9 @@ function Topbar({ role, setRole, setActivePage }) {
           <span className="notification-dot"></span>
         </button>
 
-        <div className="role-switch">
-          <button
-            className={role === "student" ? "selected" : ""}
-            onClick={() => {
-              setRole("student");
-              setActivePage("Dashboard");
-            }}
-          >
-            Student
-          </button>
-
-          <button
-            className={role === "staff" ? "selected" : ""}
-            onClick={() => {
-              setRole("staff");
-              setActivePage("Dashboard");
-            }}
-          >
-            Faculty
-          </button>
-
-          <button
-            className={role === "admin" ? "selected" : ""}
-            onClick={() => {
-              setRole("admin");
-              setActivePage("Dashboard");
-            }}
-          >
-            Admin
-          </button>
-        </div>
+        <button className="logout-button" onClick={onLogout}>
+          Logout
+        </button>
       </div>
     </header>
   );

@@ -3,7 +3,7 @@ import QuickAction from "../../components/QuickAction";
 import RequestItem from "../../components/RequestItem";
 import NoticeItem from "../../components/NoticeItem";
 
-function StudentDashboard() {
+function StudentDashboard({ userId }) {
   return (
     <>
       <div className="stats-grid">

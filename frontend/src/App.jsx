@@ -19,6 +19,7 @@ import StaffDashboard from "./pages/staff/StaffDashboard";
 import Students from "./pages/staff/Students";
 import Complaints from "./pages/staff/Complaints";
 import Announcements from "./pages/staff/Announcements";
+import FacultyTimetable from "./pages/staff/FacultyTimetable";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminComplaints from "./pages/admin/Complaints";
@@ -32,9 +33,30 @@ import Communication from "./pages/admin/Communication";
 import StaffWorkload from "./pages/admin/StaffWorkload";
 import Reports from "./pages/admin/Reports";
 
+import Login from "./pages/auth/loginn";
+
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState("student");
+  const [userId, setUserId] = useState("");
   const [activePage, setActivePage] = useState("Dashboard");
+
+  // ================= LOGIN =================
+
+  if (!isLoggedIn) {
+    return (
+      <Login
+        onLogin={(selectedRole, enteredUserId) => {
+          setRole(selectedRole);
+          setUserId(enteredUserId);
+          setActivePage("Dashboard");
+          setIsLoggedIn(true);
+        }}
+      />
+    );
+  }
+
+  // ================= MAIN APP =================
 
   return (
     <div className="app">
@@ -45,25 +67,34 @@ function App() {
       />
 
       <main className="main">
-        <Topbar role={role} setRole={setRole} setActivePage={setActivePage} />
+        <Topbar
+          onLogout={() => {
+            setIsLoggedIn(false);
+            setUserId("");
+            setRole("student");
+            setActivePage("Dashboard");
+          }}
+        />
 
         <section className="page">
           <PageHeader role={role} activePage={activePage} />
 
           {/* ================= DASHBOARD ================= */}
+
           {activePage === "Dashboard" && (
             <>
               {role === "student" ? (
-                <StudentDashboard />
+                <StudentDashboard userId={userId} />
               ) : role === "staff" ? (
-                <StaffDashboard />
+                <StaffDashboard userId={userId} />
               ) : (
-                <AdminDashboard />
+                <AdminDashboard userId={userId} />
               )}
             </>
           )}
 
           {/* ================= OTHER PAGES ================= */}
+
           {activePage !== "Dashboard" &&
             (role === "student" ? (
               activePage === "Attendance" ? (
@@ -89,7 +120,7 @@ function App() {
               ) : activePage === "Attendance" ? (
                 <Attendance />
               ) : activePage === "Timetable" ? (
-                <Timetable />
+                <FacultyTimetable />
               ) : activePage === "Requests" ? (
                 <Requests />
               ) : activePage === "Complaints" ? (
@@ -122,46 +153,6 @@ function App() {
             ) : null)}
         </section>
       </main>
-    </div>
-  );
-}
-
-/* =========================================================
-   PAGE CONTENT (Fallback for empty pages)
-========================================================= */
-
-function PageContent({ page, role }) {
-  const descriptions = {
-    Attendance: "View and manage student attendance records.",
-    Timetable: "View and update class schedules.",
-    Requests: "Track certificates, leave requests and gate passes.",
-    Hostel: "Manage hostel complaints and maintenance requests.",
-    Mess: "View the mess menu and manage feedback.",
-    Notices: "Campus announcements and targeted notifications.",
-    Fees: "View semester fees and payment information.",
-    Students: "View and manage student information.",
-    Complaints: "Track, assign and resolve campus complaints.",
-    Announcements: "Create targeted announcements and track read status.",
-    Maintenance: "Track maintenance requests and monitor their resolution.",
-    Rooms: "Manage campus rooms, classrooms and facility availability.",
-    Assets: "Track campus equipment, furniture and other assets.",
-    Visitors: "Manage visitor records and campus visitor information.",
-    "Gate Logs": "View and monitor campus entry and exit records.",
-    Communication: "Send targeted communication to students and staff.",
-    "Staff Workload": "Monitor staff assignments, workload and pending tasks.",
-    Reports: "View administrative reports and campus operation insights.",
-  };
-
-  return (
-    <div className="panel page-placeholder">
-      <div className="empty-icon">
-        {role === "student" ? "📚" : role === "staff" ? "⚙️" : "🏢"}
-      </div>
-      <h2>{page}</h2>
-      <p>{descriptions[page] || "Manage this CampusOne section."}</p>
-      {(role === "staff" || role === "admin") && (
-        <button className="primary-button">+ Add / Modify Information</button>
-      )}
     </div>
   );
 }
