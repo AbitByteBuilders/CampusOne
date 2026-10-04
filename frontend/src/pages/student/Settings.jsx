@@ -1,15 +1,44 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function Settings({ userId }) {
-  const [activeTab, setActiveTab] = useState("Profile");
-  const [notifications, setNotifications] = useState({
-    attendance: true,
-    notices: true,
-    fees: true,
-    requests: true,
-  });
-
   const displayName = userId && userId.trim() !== "" ? userId : "Student";
+
+  const avatarLetter = displayName.charAt(0).toUpperCase();
+
+  const [activeTab, setActiveTab] = useState("Profile");
+
+  const [fullName, setFullName] = useState(displayName);
+  const [email, setEmail] = useState("student@campusone.edu");
+  const [phone, setPhone] = useState("+91 98765 43210");
+
+  const [emailNotifications, setEmailNotifications] = useState(true);
+
+  const [attendanceAlerts, setAttendanceAlerts] = useState(true);
+
+  const [noticeAlerts, setNoticeAlerts] = useState(true);
+
+  const [selectedTheme, setSelectedTheme] = useState(
+    localStorage.getItem("campusone-theme") || "light",
+  );
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", selectedTheme);
+
+    localStorage.setItem("campusone-theme", selectedTheme);
+  }, [selectedTheme]);
+
+  const saveProfile = () => {
+    alert("Profile settings saved successfully.");
+  };
+
+  const saveNotifications = () => {
+    alert("Notification settings saved successfully.");
+  };
+
+  const changePassword = (event) => {
+    event.preventDefault();
+    alert("Password changed successfully.");
+  };
 
   const tabs = [
     ["👤", "Profile"],
@@ -18,31 +47,24 @@ function Settings({ userId }) {
     ["🎨", "Appearance"],
   ];
 
-  const handleSave = () => {
-    alert("Settings saved successfully!");
-  };
-
   return (
     <div className="student-settings-page">
-      {" "}
       <div className="panel settings-hero">
-        {" "}
         <div>
-          {" "}
-          <h2>Student Settings</h2>{" "}
-          <p>Manage your profile, notifications and preferences.</p>{" "}
+          <h2>Settings</h2>
+          <p>Manage your profile, notifications and appearance.</p>
         </div>
-        ```
+
         <div className="settings-profile-mini">
-          <div className="settings-avatar">
-            {displayName.charAt(0).toUpperCase()}
-          </div>
+          <div className="settings-avatar">{avatarLetter}</div>
+
           <div>
             <strong>{displayName}</strong>
             <span>Student</span>
           </div>
         </div>
       </div>
+
       <div className="settings-layout">
         <div className="panel settings-sidebar">
           <h3>Settings</h3>
@@ -50,6 +72,7 @@ function Settings({ userId }) {
           {tabs.map(([icon, name]) => (
             <button
               key={name}
+              type="button"
               className={`settings-tab ${activeTab === name ? "active" : ""}`}
               onClick={() => setActiveTab(name)}
             >
@@ -66,45 +89,68 @@ function Settings({ userId }) {
                 <div className="settings-section-header">
                   <div>
                     <h2>Profile Information</h2>
-                    <p>Your basic student information</p>
+                    <p>Update your personal information.</p>
                   </div>
+
                   <span className="settings-badge">Student</span>
                 </div>
 
                 <div className="profile-large">
-                  <div className="profile-large-avatar">
-                    {displayName.charAt(0).toUpperCase()}
-                  </div>
+                  <div className="profile-large-avatar">{avatarLetter}</div>
 
                   <div>
                     <h3>{displayName}</h3>
-                    <p>CampusOne Student</p>
+                    <p>Student • CampusOne</p>
                   </div>
                 </div>
 
                 <div className="settings-form-grid">
                   <div className="settings-field">
                     <label>Full Name</label>
-                    <input type="text" defaultValue={displayName} />
+
+                    <input
+                      type="text"
+                      value={fullName}
+                      onChange={(event) => setFullName(event.target.value)}
+                    />
                   </div>
 
                   <div className="settings-field">
                     <label>Student ID</label>
-                    <input type="text" defaultValue={displayName} readOnly />
+
+                    <input
+                      type="text"
+                      value={userId || "STUDENT001"}
+                      readOnly
+                    />
                   </div>
 
                   <div className="settings-field">
-                    <label>Email</label>
-                    <input type="email" placeholder="student@campusone.edu" />
+                    <label>Email Address</label>
+
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                    />
                   </div>
 
                   <div className="settings-field">
                     <label>Phone Number</label>
-                    <input type="tel" placeholder="Enter phone number" />
+
+                    <input
+                      type="text"
+                      value={phone}
+                      onChange={(event) => setPhone(event.target.value)}
+                    />
                   </div>
                 </div>
 
-                <button className="primary-button" onClick={handleSave}>
+                <button
+                  className="primary-button"
+                  type="button"
+                  onClick={saveProfile}
+                >
                   Save Profile
                 </button>
               </div>
@@ -113,19 +159,14 @@ function Settings({ userId }) {
                 <div className="settings-section-header">
                   <div>
                     <h2>Academic Information</h2>
-                    <p>Your academic details</p>
+                    <p>Your current academic details.</p>
                   </div>
                 </div>
 
                 <div className="settings-info-grid">
                   <div>
-                    <span>Department</span>
+                    <span>Course</span>
                     <strong>Computer Science & Engineering</strong>
-                  </div>
-
-                  <div>
-                    <span>Program</span>
-                    <strong>B.Tech</strong>
                   </div>
 
                   <div>
@@ -134,8 +175,13 @@ function Settings({ userId }) {
                   </div>
 
                   <div>
+                    <span>Section</span>
+                    <strong>CSE-A</strong>
+                  </div>
+
+                  <div>
                     <span>Academic Year</span>
-                    <strong>2026–27</strong>
+                    <strong>2025–2026</strong>
                   </div>
                 </div>
               </div>
@@ -146,87 +192,67 @@ function Settings({ userId }) {
             <div className="panel settings-section">
               <div className="settings-section-header">
                 <div>
-                  <h2>Notification Preferences</h2>
-                  <p>Choose which updates you want to receive.</p>
+                  <h2>Notification Settings</h2>
+                  <p>Choose which notifications you want to receive.</p>
                 </div>
               </div>
 
               <div className="settings-options">
                 <label className="settings-option">
                   <div>
+                    <strong>Email Notifications</strong>
+
+                    <span>Receive important campus updates by email.</span>
+                  </div>
+
+                  <input
+                    type="checkbox"
+                    checked={emailNotifications}
+                    onChange={(event) =>
+                      setEmailNotifications(event.target.checked)
+                    }
+                  />
+                </label>
+
+                <label className="settings-option">
+                  <div>
                     <strong>Attendance Alerts</strong>
-                    <span>Get notified about attendance shortages.</span>
+
+                    <span>
+                      Get notified when your attendance falls below 75%.
+                    </span>
                   </div>
 
                   <input
                     type="checkbox"
-                    checked={notifications.attendance}
-                    onChange={() =>
-                      setNotifications({
-                        ...notifications,
-                        attendance: !notifications.attendance,
-                      })
+                    checked={attendanceAlerts}
+                    onChange={(event) =>
+                      setAttendanceAlerts(event.target.checked)
                     }
                   />
                 </label>
 
                 <label className="settings-option">
                   <div>
-                    <strong>College Notices</strong>
-                    <span>Receive important campus announcements.</span>
+                    <strong>Notice Alerts</strong>
+
+                    <span>Receive notifications for new campus notices.</span>
                   </div>
 
                   <input
                     type="checkbox"
-                    checked={notifications.notices}
-                    onChange={() =>
-                      setNotifications({
-                        ...notifications,
-                        notices: !notifications.notices,
-                      })
-                    }
-                  />
-                </label>
-
-                <label className="settings-option">
-                  <div>
-                    <strong>Fee Reminders</strong>
-                    <span>Get reminders about pending fees.</span>
-                  </div>
-
-                  <input
-                    type="checkbox"
-                    checked={notifications.fees}
-                    onChange={() =>
-                      setNotifications({
-                        ...notifications,
-                        fees: !notifications.fees,
-                      })
-                    }
-                  />
-                </label>
-
-                <label className="settings-option">
-                  <div>
-                    <strong>Request Updates</strong>
-                    <span>Get updates when your requests change status.</span>
-                  </div>
-
-                  <input
-                    type="checkbox"
-                    checked={notifications.requests}
-                    onChange={() =>
-                      setNotifications({
-                        ...notifications,
-                        requests: !notifications.requests,
-                      })
-                    }
+                    checked={noticeAlerts}
+                    onChange={(event) => setNoticeAlerts(event.target.checked)}
                   />
                 </label>
               </div>
 
-              <button className="primary-button" onClick={handleSave}>
-                Save Preferences
+              <button
+                className="primary-button"
+                type="button"
+                onClick={saveNotifications}
+              >
+                Save Notification Settings
               </button>
             </div>
           )}
@@ -240,26 +266,41 @@ function Settings({ userId }) {
                 </div>
               </div>
 
-              <div className="settings-form-single">
+              <form className="settings-form-single" onSubmit={changePassword}>
                 <div className="settings-field">
                   <label>Current Password</label>
-                  <input type="password" placeholder="Enter current password" />
+
+                  <input
+                    type="password"
+                    placeholder="Enter current password"
+                    required
+                  />
                 </div>
 
                 <div className="settings-field">
                   <label>New Password</label>
-                  <input type="password" placeholder="Enter new password" />
+
+                  <input
+                    type="password"
+                    placeholder="Enter new password"
+                    required
+                  />
                 </div>
 
                 <div className="settings-field">
                   <label>Confirm New Password</label>
-                  <input type="password" placeholder="Confirm new password" />
-                </div>
-              </div>
 
-              <button className="primary-button" onClick={handleSave}>
-                Update Password
-              </button>
+                  <input
+                    type="password"
+                    placeholder="Confirm new password"
+                    required
+                  />
+                </div>
+
+                <button className="primary-button" type="submit">
+                  Change Password
+                </button>
+              </form>
             </div>
           )}
 
@@ -268,30 +309,56 @@ function Settings({ userId }) {
               <div className="settings-section-header">
                 <div>
                   <h2>Appearance</h2>
-                  <p>Customize how CampusOne looks for you.</p>
+                  <p>Choose how CampusOne looks for you.</p>
                 </div>
               </div>
 
               <div className="appearance-options">
-                <button className="appearance-card active">
+                <button
+                  type="button"
+                  className={`appearance-card ${
+                    selectedTheme === "light" ? "active" : ""
+                  }`}
+                  onClick={() => setSelectedTheme("light")}
+                >
                   <span>☀️</span>
+
                   <div>
                     <strong>Light Mode</strong>
-                    <small>Clean and bright interface</small>
+
+                    <small>Use the bright CampusOne interface.</small>
                   </div>
-                  <b>✓</b>
+
+                  {selectedTheme === "light" && <b>✓</b>}
                 </button>
 
                 <button
-                  className="appearance-card"
-                  onClick={() => alert("Dark mode will be available soon.")}
+                  type="button"
+                  className={`appearance-card ${
+                    selectedTheme === "dark" ? "active" : ""
+                  }`}
+                  onClick={() => setSelectedTheme("dark")}
                 >
                   <span>🌙</span>
+
                   <div>
                     <strong>Dark Mode</strong>
-                    <small>Comfortable for low-light use</small>
+
+                    <small>
+                      Use a darker interface that is easier on the eyes.
+                    </small>
                   </div>
+
+                  {selectedTheme === "dark" && <b>✓</b>}
                 </button>
+              </div>
+
+              <div className="theme-status">
+                <span>Current theme</span>
+
+                <strong>
+                  {selectedTheme === "dark" ? "🌙 Dark Mode" : "☀️ Light Mode"}
+                </strong>
               </div>
             </div>
           )}

@@ -1,430 +1,426 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function FacultySettings({ userId }) {
-  const [activeSection, setActiveSection] = useState("profile");
+  const displayName = userId && userId.trim() !== "" ? userId : "Faculty";
 
-  const [profile, setProfile] = useState({
-    name: userId || "Faculty",
-    email: "faculty@campusone.edu",
-    phone: "+91 98765 43210",
-    department: "Computer Science & Engineering",
-    designation: "Assistant Professor",
-    employeeId: "FAC-001",
-  });
+  const avatarLetter = displayName.charAt(0).toUpperCase();
 
-  const [notifications, setNotifications] = useState({
-    announcements: true,
-    attendance: true,
-    complaints: true,
-    requests: false,
-    email: true,
-  });
+  const [activeTab, setActiveTab] = useState("Profile");
 
-  const [appearance, setAppearance] = useState("light");
+  const [fullName, setFullName] = useState(displayName);
+  const [email, setEmail] = useState("faculty@campusone.edu");
+  const [phone, setPhone] = useState("+91 98765 43210");
 
-  const [passwords, setPasswords] = useState({
-    current: "",
-    newPassword: "",
-    confirm: "",
-  });
+  const [emailNotifications, setEmailNotifications] = useState(true);
 
-  const handleProfileChange = (e) => {
-    setProfile({
-      ...profile,
-      [e.target.name]: e.target.value,
-    });
+  const [attendanceAlerts, setAttendanceAlerts] = useState(true);
+
+  const [requestAlerts, setRequestAlerts] = useState(true);
+
+  const [complaintAlerts, setComplaintAlerts] = useState(true);
+
+  const [selectedTheme, setSelectedTheme] = useState(
+    localStorage.getItem("campusone-theme") || "light",
+  );
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", selectedTheme);
+
+    localStorage.setItem("campusone-theme", selectedTheme);
+  }, [selectedTheme]);
+
+  const saveProfile = () => {
+    alert("Faculty profile saved successfully.");
   };
 
-  const handlePasswordChange = (e) => {
-    setPasswords({
-      ...passwords,
-      [e.target.name]: e.target.value,
-    });
+  const saveNotifications = () => {
+    alert("Notification settings saved successfully.");
   };
 
-  const handleSaveProfile = () => {
-    alert("Profile changes saved successfully.");
-  };
+  const changePassword = (event) => {
+    event.preventDefault();
 
-  const handleChangePassword = () => {
-    if (!passwords.current || !passwords.newPassword || !passwords.confirm) {
-      alert("Please fill in all password fields.");
-      return;
-    }
+    const newPassword = event.target.newPassword.value;
 
-    if (passwords.newPassword !== passwords.confirm) {
+    const confirmPassword = event.target.confirmPassword.value;
+
+    if (newPassword !== confirmPassword) {
       alert("New password and confirm password do not match.");
       return;
     }
 
     alert("Password changed successfully.");
-
-    setPasswords({
-      current: "",
-      newPassword: "",
-      confirm: "",
-    });
+    event.target.reset();
   };
 
-  const sections = [
-    ["👤", "Profile", "profile"],
-    ["🔔", "Notifications", "notifications"],
-    ["🔐", "Password", "password"],
-    ["🎨", "Appearance", "appearance"],
+  const tabs = [
+    ["👤", "Profile"],
+    ["🔔", "Notifications"],
+    ["🔒", "Password"],
+    ["🎨", "Appearance"],
   ];
 
   return (
     <div className="faculty-settings-page">
-      {/* Header */}
-      <div className="faculty-settings-header">
+      <div className="panel faculty-settings-hero">
         <div>
           <h2>Faculty Settings</h2>
-          <p>Manage your faculty profile and preferences</p>
+
+          <p>
+            Manage your faculty profile, notifications, security and appearance.
+          </p>
+        </div>
+
+        <div className="faculty-settings-profile-mini">
+          <div className="faculty-settings-avatar">{avatarLetter}</div>
+
+          <div>
+            <strong>{displayName}</strong>
+            <span>Faculty</span>
+          </div>
         </div>
       </div>
 
       <div className="faculty-settings-layout">
-        {/* Settings Navigation */}
-        <div className="faculty-settings-sidebar">
-          {sections.map(([icon, label, section]) => (
+        <div className="panel faculty-settings-sidebar">
+          <h3>Settings</h3>
+
+          {tabs.map(([icon, name]) => (
             <button
-              key={section}
-              className={
-                activeSection === section
-                  ? "faculty-settings-nav active"
-                  : "faculty-settings-nav"
-              }
-              onClick={() => setActiveSection(section)}
+              key={name}
+              type="button"
+              className={`faculty-settings-tab ${
+                activeTab === name ? "active" : ""
+              }`}
+              onClick={() => setActiveTab(name)}
             >
               <span>{icon}</span>
-              <div>
-                <strong>{label}</strong>
-                <small>
-                  {section === "profile"
-                    ? "Personal information"
-                    : section === "notifications"
-                      ? "Alerts and updates"
-                      : section === "password"
-                        ? "Security settings"
-                        : "Display preferences"}
-                </small>
-              </div>
+              {name}
             </button>
           ))}
         </div>
 
-        {/* Settings Content */}
         <div className="faculty-settings-content">
-          {/* PROFILE */}
-          {activeSection === "profile" && (
-            <div className="settings-card">
-              <div className="settings-card-header">
-                <div>
-                  <h2>Faculty Profile</h2>
-                  <p>Update your professional information</p>
-                </div>
-              </div>
-
-              {/* Profile Avatar */}
-              <div className="faculty-profile-preview">
-                <div className="faculty-profile-avatar">
-                  {profile.name.charAt(0).toUpperCase()}
-                </div>
-
-                <div>
-                  <h3>{profile.name}</h3>
-                  <p>{profile.designation}</p>
-                  <span>{profile.department}</span>
-                </div>
-              </div>
-
-              <div className="settings-form-grid">
-                <div className="settings-form-group">
-                  <label>Full Name</label>
-                  <input
-                    name="name"
-                    value={profile.name}
-                    onChange={handleProfileChange}
-                  />
-                </div>
-
-                <div className="settings-form-group">
-                  <label>Employee ID</label>
-                  <input value={profile.employeeId} disabled />
-                </div>
-
-                <div className="settings-form-group">
-                  <label>Email Address</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={profile.email}
-                    onChange={handleProfileChange}
-                  />
-                </div>
-
-                <div className="settings-form-group">
-                  <label>Phone Number</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={profile.phone}
-                    onChange={handleProfileChange}
-                  />
-                </div>
-
-                <div className="settings-form-group">
-                  <label>Department</label>
-                  <input
-                    name="department"
-                    value={profile.department}
-                    onChange={handleProfileChange}
-                  />
-                </div>
-
-                <div className="settings-form-group">
-                  <label>Designation</label>
-                  <input
-                    name="designation"
-                    value={profile.designation}
-                    onChange={handleProfileChange}
-                  />
-                </div>
-              </div>
-
-              <div className="settings-actions">
-                <button className="primary-button" onClick={handleSaveProfile}>
-                  Save Changes
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* NOTIFICATIONS */}
-          {activeSection === "notifications" && (
-            <div className="settings-card">
-              <div className="settings-card-header">
-                <div>
-                  <h2>Notification Preferences</h2>
-                  <p>Choose which notifications you want to receive</p>
-                </div>
-              </div>
-
-              <div className="settings-toggle-list">
-                <div className="settings-toggle">
+          {activeTab === "Profile" && (
+            <>
+              <div className="panel faculty-settings-section">
+                <div className="faculty-settings-section-header">
                   <div>
-                    <strong>📢 Announcements</strong>
-                    <p>Receive important campus announcements</p>
+                    <h2>Faculty Profile</h2>
+
+                    <p>Update your personal and contact information.</p>
                   </div>
 
-                  <input
-                    type="checkbox"
-                    checked={notifications.announcements}
-                    onChange={() =>
-                      setNotifications({
-                        ...notifications,
-                        announcements: !notifications.announcements,
-                      })
-                    }
-                  />
+                  <span className="faculty-settings-badge">Faculty</span>
                 </div>
 
-                <div className="settings-toggle">
-                  <div>
-                    <strong>📊 Attendance Alerts</strong>
-                    <p>Receive notifications about attendance issues</p>
+                <div className="faculty-profile-large">
+                  <div className="faculty-profile-large-avatar">
+                    {avatarLetter}
                   </div>
 
-                  <input
-                    type="checkbox"
-                    checked={notifications.attendance}
-                    onChange={() =>
-                      setNotifications({
-                        ...notifications,
-                        attendance: !notifications.attendance,
-                      })
-                    }
-                  />
+                  <div>
+                    <h3>{displayName}</h3>
+
+                    <p>Faculty & Staff • CampusOne</p>
+                  </div>
                 </div>
 
-                <div className="settings-toggle">
-                  <div>
-                    <strong>🔧 Complaint Updates</strong>
-                    <p>Get updates when complaints change status</p>
+                <div className="faculty-settings-form-grid">
+                  <div className="faculty-settings-field">
+                    <label>Full Name</label>
+
+                    <input
+                      type="text"
+                      value={fullName}
+                      onChange={(event) => setFullName(event.target.value)}
+                    />
                   </div>
 
-                  <input
-                    type="checkbox"
-                    checked={notifications.complaints}
-                    onChange={() =>
-                      setNotifications({
-                        ...notifications,
-                        complaints: !notifications.complaints,
-                      })
-                    }
-                  />
-                </div>
+                  <div className="faculty-settings-field">
+                    <label>Faculty ID</label>
 
-                <div className="settings-toggle">
-                  <div>
-                    <strong>📄 Student Requests</strong>
-                    <p>Receive notifications for student requests</p>
+                    <input type="text" value={userId || "FAC001"} readOnly />
                   </div>
 
-                  <input
-                    type="checkbox"
-                    checked={notifications.requests}
-                    onChange={() =>
-                      setNotifications({
-                        ...notifications,
-                        requests: !notifications.requests,
-                      })
-                    }
-                  />
-                </div>
+                  <div className="faculty-settings-field">
+                    <label>Email Address</label>
 
-                <div className="settings-toggle">
-                  <div>
-                    <strong>📧 Email Notifications</strong>
-                    <p>Receive important updates by email</p>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                    />
                   </div>
 
-                  <input
-                    type="checkbox"
-                    checked={notifications.email}
-                    onChange={() =>
-                      setNotifications({
-                        ...notifications,
-                        email: !notifications.email,
-                      })
-                    }
-                  />
-                </div>
-              </div>
+                  <div className="faculty-settings-field">
+                    <label>Phone Number</label>
 
-              <div className="settings-actions">
+                    <input
+                      type="text"
+                      value={phone}
+                      onChange={(event) => setPhone(event.target.value)}
+                    />
+                  </div>
+
+                  <div className="faculty-settings-field">
+                    <label>Department</label>
+
+                    <input
+                      type="text"
+                      value="Computer Science & Engineering"
+                      readOnly
+                    />
+                  </div>
+
+                  <div className="faculty-settings-field">
+                    <label>Designation</label>
+
+                    <input type="text" value="Assistant Professor" readOnly />
+                  </div>
+                </div>
+
                 <button
                   className="primary-button"
-                  onClick={() => alert("Notification preferences saved.")}
+                  type="button"
+                  onClick={saveProfile}
                 >
-                  Save Preferences
+                  Save Profile
                 </button>
               </div>
+
+              <div className="panel faculty-settings-section">
+                <div className="faculty-settings-section-header">
+                  <div>
+                    <h2>Teaching Information</h2>
+
+                    <p>Your current academic responsibilities.</p>
+                  </div>
+                </div>
+
+                <div className="faculty-settings-info-grid">
+                  <div>
+                    <span>Department</span>
+                    <strong>Computer Science & Engineering</strong>
+                  </div>
+
+                  <div>
+                    <span>Subjects Assigned</span>
+                    <strong>6 Subjects</strong>
+                  </div>
+
+                  <div>
+                    <span>Current Semester</span>
+                    <strong>5th Semester</strong>
+                  </div>
+
+                  <div>
+                    <span>Academic Year</span>
+                    <strong>2025–2026</strong>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {activeTab === "Notifications" && (
+            <div className="panel faculty-settings-section">
+              <div className="faculty-settings-section-header">
+                <div>
+                  <h2>Notification Settings</h2>
+
+                  <p>Choose which faculty notifications you want to receive.</p>
+                </div>
+              </div>
+
+              <div className="faculty-settings-options">
+                <label className="faculty-settings-option">
+                  <div>
+                    <strong>Email Notifications</strong>
+
+                    <span>
+                      Receive important campus and academic updates by email.
+                    </span>
+                  </div>
+
+                  <input
+                    type="checkbox"
+                    checked={emailNotifications}
+                    onChange={(event) =>
+                      setEmailNotifications(event.target.checked)
+                    }
+                  />
+                </label>
+
+                <label className="faculty-settings-option">
+                  <div>
+                    <strong>Attendance Alerts</strong>
+
+                    <span>
+                      Receive alerts about student attendance shortages.
+                    </span>
+                  </div>
+
+                  <input
+                    type="checkbox"
+                    checked={attendanceAlerts}
+                    onChange={(event) =>
+                      setAttendanceAlerts(event.target.checked)
+                    }
+                  />
+                </label>
+
+                <label className="faculty-settings-option">
+                  <div>
+                    <strong>Student Request Alerts</strong>
+
+                    <span>Get notified when students submit new requests.</span>
+                  </div>
+
+                  <input
+                    type="checkbox"
+                    checked={requestAlerts}
+                    onChange={(event) => setRequestAlerts(event.target.checked)}
+                  />
+                </label>
+
+                <label className="faculty-settings-option">
+                  <div>
+                    <strong>Complaint Alerts</strong>
+
+                    <span>Receive updates about faculty complaints.</span>
+                  </div>
+
+                  <input
+                    type="checkbox"
+                    checked={complaintAlerts}
+                    onChange={(event) =>
+                      setComplaintAlerts(event.target.checked)
+                    }
+                  />
+                </label>
+              </div>
+
+              <button
+                className="primary-button"
+                type="button"
+                onClick={saveNotifications}
+              >
+                Save Notification Settings
+              </button>
             </div>
           )}
 
-          {/* PASSWORD */}
-          {activeSection === "password" && (
-            <div className="settings-card">
-              <div className="settings-card-header">
+          {activeTab === "Password" && (
+            <div className="panel faculty-settings-section">
+              <div className="faculty-settings-section-header">
                 <div>
                   <h2>Change Password</h2>
-                  <p>Keep your faculty account secure</p>
+
+                  <p>Keep your faculty CampusOne account secure.</p>
                 </div>
               </div>
 
-              <div className="security-message">
-                🔐 Use a strong password containing letters, numbers and special
-                characters.
-              </div>
-
-              <div className="settings-password-form">
-                <div className="settings-form-group">
+              <form
+                className="faculty-settings-form-single"
+                onSubmit={changePassword}
+              >
+                <div className="faculty-settings-field">
                   <label>Current Password</label>
+
                   <input
                     type="password"
-                    name="current"
-                    value={passwords.current}
-                    onChange={handlePasswordChange}
+                    name="currentPassword"
                     placeholder="Enter current password"
+                    required
                   />
                 </div>
 
-                <div className="settings-form-group">
+                <div className="faculty-settings-field">
                   <label>New Password</label>
+
                   <input
                     type="password"
                     name="newPassword"
-                    value={passwords.newPassword}
-                    onChange={handlePasswordChange}
                     placeholder="Enter new password"
+                    required
                   />
                 </div>
 
-                <div className="settings-form-group">
+                <div className="faculty-settings-field">
                   <label>Confirm New Password</label>
+
                   <input
                     type="password"
-                    name="confirm"
-                    value={passwords.confirm}
-                    onChange={handlePasswordChange}
+                    name="confirmPassword"
                     placeholder="Confirm new password"
+                    required
                   />
                 </div>
-              </div>
 
-              <div className="settings-actions">
-                <button
-                  className="primary-button"
-                  onClick={handleChangePassword}
-                >
-                  Update Password
+                <button className="primary-button" type="submit">
+                  Change Password
                 </button>
-              </div>
+              </form>
             </div>
           )}
 
-          {/* APPEARANCE */}
-          {activeSection === "appearance" && (
-            <div className="settings-card">
-              <div className="settings-card-header">
+          {activeTab === "Appearance" && (
+            <div className="panel faculty-settings-section">
+              <div className="faculty-settings-section-header">
                 <div>
                   <h2>Appearance</h2>
-                  <p>Customize how CampusOne looks</p>
+
+                  <p>Choose how the CampusOne faculty portal looks.</p>
                 </div>
               </div>
 
-              <div className="appearance-options">
+              <div className="faculty-appearance-options">
                 <button
-                  className={
-                    appearance === "light"
-                      ? "appearance-option active"
-                      : "appearance-option"
-                  }
-                  onClick={() => setAppearance("light")}
+                  type="button"
+                  className={`faculty-appearance-card ${
+                    selectedTheme === "light" ? "active" : ""
+                  }`}
+                  onClick={() => setSelectedTheme("light")}
                 >
-                  <div className="appearance-preview light-preview">☀️</div>
+                  <span>☀️</span>
 
                   <div>
                     <strong>Light Mode</strong>
-                    <p>Clean and bright interface</p>
+
+                    <small>Use the bright CampusOne interface.</small>
                   </div>
+
+                  {selectedTheme === "light" && <b>✓</b>}
                 </button>
 
                 <button
-                  className={
-                    appearance === "dark"
-                      ? "appearance-option active"
-                      : "appearance-option"
-                  }
-                  onClick={() => setAppearance("dark")}
+                  type="button"
+                  className={`faculty-appearance-card ${
+                    selectedTheme === "dark" ? "active" : ""
+                  }`}
+                  onClick={() => setSelectedTheme("dark")}
                 >
-                  <div className="appearance-preview dark-preview">🌙</div>
+                  <span>🌙</span>
 
                   <div>
                     <strong>Dark Mode</strong>
-                    <p>Comfortable interface for low light</p>
+
+                    <small>
+                      Use a darker interface that is easier on the eyes.
+                    </small>
                   </div>
+
+                  {selectedTheme === "dark" && <b>✓</b>}
                 </button>
               </div>
 
-              <div className="settings-actions">
-                <button
-                  className="primary-button"
-                  onClick={() => alert(`${appearance} mode selected.`)}
-                >
-                  Save Appearance
-                </button>
+              <div className="faculty-theme-status">
+                <span>Current theme</span>
+
+                <strong>
+                  {selectedTheme === "dark" ? "🌙 Dark Mode" : "☀️ Light Mode"}
+                </strong>
               </div>
             </div>
           )}
