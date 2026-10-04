@@ -1,4 +1,25 @@
-function PageHeader({ role, activePage }) {
+function PageHeader({ role, userId, activePage }) {
+  const hour = new Date().getHours();
+
+  let greeting;
+
+  if (hour < 12) {
+    greeting = "Good morning";
+  } else if (hour < 17) {
+    greeting = "Good afternoon";
+  } else {
+    greeting = "Good evening";
+  }
+
+  const displayName =
+    userId && userId.trim() !== ""
+      ? userId
+      : role === "student"
+        ? "Student"
+        : role === "staff"
+          ? "Faculty"
+          : "Admin";
+
   return (
     <div className="page-header">
       <div>
@@ -7,10 +28,10 @@ function PageHeader({ role, activePage }) {
         <h1>
           {activePage === "Dashboard"
             ? role === "student"
-              ? "Good morning, Pratyusha 👋"
+              ? `${greeting}, ${displayName} 👋`
               : role === "staff"
-                ? "Faculty Dashboard"
-                : "Administration Dashboard"
+                ? `${greeting}, ${displayName} 👋`
+                : `${greeting}, ${displayName} 👋`
             : activePage}
         </h1>
 

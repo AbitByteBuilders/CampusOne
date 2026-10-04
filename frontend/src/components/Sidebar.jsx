@@ -1,4 +1,4 @@
-function Sidebar({ role, activePage, setActivePage }) {
+function Sidebar({ role, userId, activePage, setActivePage }) {
   const studentMenu = [
     ["🏠", "Dashboard"],
     ["📊", "Attendance"],
@@ -12,13 +12,12 @@ function Sidebar({ role, activePage, setActivePage }) {
 
   const staffMenu = [
     ["📊", "Dashboard"],
-    ["👨‍🎓", "Students"],
+
     ["📊", "Attendance"],
     ["📅", "Timetable"],
     ["📄", "Requests"],
     ["🔧", "Complaints"],
     ["📢", "Announcements"],
-    ["🍱", "Mess"],
   ];
 
   const adminMenu = [
@@ -35,11 +34,26 @@ function Sidebar({ role, activePage, setActivePage }) {
     ["📊", "Reports"],
   ];
 
+  // Select menu according to logged-in role
   const menu =
     role === "student" ? studentMenu : role === "staff" ? staffMenu : adminMenu;
 
+  // Show the logged-in user's name/ID
+  const displayName =
+    userId && userId.trim() !== ""
+      ? userId
+      : role === "student"
+        ? "Student"
+        : role === "staff"
+          ? "Faculty"
+          : "Admin";
+
+  // First letter for avatar
+  const avatarLetter = displayName.charAt(0).toUpperCase();
+
   return (
     <aside className="sidebar">
+      {/* CampusOne Logo */}
       <div className="brand">
         <div className="brand-icon">C</div>
 
@@ -49,6 +63,7 @@ function Sidebar({ role, activePage, setActivePage }) {
         </div>
       </div>
 
+      {/* Portal Name */}
       <div className="portal-label">
         {role === "student"
           ? "STUDENT PORTAL"
@@ -57,6 +72,7 @@ function Sidebar({ role, activePage, setActivePage }) {
             : "ADMINISTRATION"}
       </div>
 
+      {/* Navigation Menu */}
       <nav>
         {menu.map(([icon, name]) => (
           <button
@@ -70,24 +86,19 @@ function Sidebar({ role, activePage, setActivePage }) {
         ))}
       </nav>
 
+      {/* Bottom Section */}
       <div className="sidebar-bottom">
+        {/* Settings */}
         <button className="nav-item" onClick={() => setActivePage("Settings")}>
           ⚙️ Settings
         </button>
 
+        {/* Logged-in User */}
         <div className="sidebar-user">
-          <div className="avatar">
-            {role === "student" ? "P" : role === "staff" ? "F" : "A"}
-          </div>
+          <div className="avatar">{avatarLetter}</div>
 
           <div>
-            <strong>
-              {role === "student"
-                ? "Pratyusha"
-                : role === "staff"
-                  ? "Faculty Admin"
-                  : "Campus Admin"}
-            </strong>
+            <strong>{displayName}</strong>
 
             <small>
               {role === "student"

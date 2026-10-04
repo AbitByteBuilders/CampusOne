@@ -1,112 +1,168 @@
 import StatCard from "../../components/StatCard";
 import RequestAction from "../../components/RequestAction";
 
-function StaffDashboard() {
+function StaffDashboard({ userId }) {
+  const facultyName = userId && userId.trim() !== "" ? userId : "Faculty";
+
   return (
     <>
+      {/* Welcome message */}
+      <div className="panel">
+        <div className="panel-header">
+          <div>
+            <h2>Welcome, {facultyName} 👋</h2>
+            <p>Here is your faculty dashboard overview.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Faculty Statistics */}
       <div className="stats-grid">
         <StatCard
+          icon="📚"
+          title="My Subjects"
+          value="6"
+          extra="Subjects assigned"
+        />
+
+        <StatCard
           icon="👨‍🎓"
-          title="Total Students"
-          value="2,084"
-          extra="Across all departments"
+          title="Students"
+          value="120"
+          extra="Across my classes"
         />
 
         <StatCard
-          icon="📄"
-          title="Pending Requests"
-          value="24"
-          extra="8 need attention"
+          icon="⚠️"
+          title="Attendance Shortage"
+          value="18"
+          extra="Students below 75%"
         />
 
         <StatCard
-          icon="🔧"
-          title="Open Complaints"
-          value="12"
-          extra="3 aging complaints"
-        />
-
-        <StatCard
-          icon="📢"
-          title="Active Notices"
-          value="8"
-          extra="92% read rate"
+          icon="📅"
+          title="Today's Classes"
+          value="4"
+          extra="2 classes remaining"
         />
       </div>
 
+      {/* Today's Classes + Attendance Alerts */}
       <div className="dashboard-grid">
         <div className="panel">
           <div className="panel-header">
             <div>
-              <h2>Requests Requiring Action</h2>
-              <p>Review and update student requests</p>
+              <h2>Today's Classes</h2>
+              <p>Your scheduled classes for today</p>
             </div>
 
-            <button className="small-button">View all</button>
+            <button className="small-button">View timetable</button>
           </div>
 
-          <RequestAction
-            title="Bonafide Certificate"
-            student="Rahul Kumar • CSE 5th"
-            status="Pending"
-          />
+          <div className="issue">
+            <span>🕘</span>
+            <div>
+              <strong>Computer Networks</strong>
+              <p>09:00 AM • CSE 3rd Year • Room 204</p>
+            </div>
+          </div>
 
-          <RequestAction
-            title="Gate Pass"
-            student="Sneha Das • CSE 3rd"
-            status="Pending"
-          />
+          <div className="issue">
+            <span>🕚</span>
+            <div>
+              <strong>Operating System</strong>
+              <p>11:00 AM • CSE 3rd Year • Room 205</p>
+            </div>
+          </div>
 
-          <RequestAction
-            title="Leave Request"
-            student="Aman Mishra • ECE 5th"
-            status="Pending"
-          />
+          <div className="issue">
+            <span>🕑</span>
+            <div>
+              <strong>AI/ML</strong>
+              <p>02:00 PM • CSE 5th Semester • Lab 2</p>
+            </div>
+          </div>
+
+          <div className="issue">
+            <span>🕓</span>
+            <div>
+              <strong>Theory of Computation</strong>
+              <p>04:00 PM • CSE 5th Semester • Room 301</p>
+            </div>
+          </div>
         </div>
 
         <div className="panel">
           <div className="panel-header">
             <div>
-              <h2>Recurring Issues</h2>
-              <p>Problems requiring attention</p>
+              <h2>Attendance Alerts</h2>
+              <p>Students below 75% attendance</p>
             </div>
+
+            <button className="small-button">View attendance</button>
           </div>
 
-          <div className="issue">
-            <span>🚰</span>
+          <RequestAction
+            title="Priya Das"
+            student="CSE002 • Computer Networks"
+            status="74%"
+          />
 
-            <div>
-              <strong>Hostel water leakage</strong>
-              <p>7 complaints this week</p>
-            </div>
-          </div>
+          <RequestAction
+            title="Rohit Singh"
+            student="CSE005 • Operating System"
+            status="61%"
+          />
 
-          <div className="issue">
-            <span>💡</span>
+          <RequestAction
+            title="Sneha Patel"
+            student="CSE004 • AI/ML"
+            status="67%"
+          />
 
-            <div>
-              <strong>Block B electricity</strong>
-              <p>4 complaints this week</p>
-            </div>
-          </div>
+          <RequestAction
+            title="Aman Kumar"
+            student="CSE003 • AI/ML"
+            status="72%"
+          />
         </div>
       </div>
 
+      {/* Subjects */}
       <div className="panel">
         <div className="panel-header">
           <div>
-            <h2>Quick Management</h2>
-            <p>Frequently used administrative actions</p>
+            <h2>My Subjects</h2>
+            <p>Subjects currently assigned to you</p>
           </div>
         </div>
 
         <div className="admin-actions">
-          <button>➕ Add Student</button>
+          <button>📚 Computer Networks</button>
+          <button>💻 Operating System</button>
+          <button>🤖 AI/ML</button>
+          <button>🔤 Theory of Computation</button>
+          <button>⚖️ Professional Ethics</button>
+          <button>🌱 Environmental Engineering</button>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="panel">
+        <div className="panel-header">
+          <div>
+            <h2>Quick Actions</h2>
+            <p>Frequently used faculty actions</p>
+          </div>
+        </div>
+
+        <div className="admin-actions">
+          <button>📊 Mark Attendance</button>
+          <button>📅 View Timetable</button>
+          <button>👨‍🎓 View Students</button>
           <button>📢 Create Announcement</button>
-          <button>📅 Update Timetable</button>
-          <button>📊 Update Attendance</button>
-          <button>🍱 Update Mess Menu</button>
-          <button>🔧 Manage Complaints</button>
+          <button>📄 Review Requests</button>
+          <button>🔧 View Complaints</button>
         </div>
       </div>
     </>

@@ -20,6 +20,8 @@ import Students from "./pages/staff/Students";
 import Complaints from "./pages/staff/Complaints";
 import Announcements from "./pages/staff/Announcements";
 import FacultyTimetable from "./pages/staff/FacultyTimetable";
+import FacultyAttendance from "./pages/staff/FacultyAttendance";
+import FacultySettings from "./pages/staff/FacultySettings";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminComplaints from "./pages/admin/Complaints";
@@ -62,6 +64,7 @@ function App() {
     <div className="app">
       <Sidebar
         role={role}
+        userId={userId}
         activePage={activePage}
         setActivePage={setActivePage}
       />
@@ -77,7 +80,7 @@ function App() {
         />
 
         <section className="page">
-          <PageHeader role={role} activePage={activePage} />
+          <PageHeader role={role} userId={userId} activePage={activePage} />
 
           {/* ================= DASHBOARD ================= */}
 
@@ -112,13 +115,11 @@ function App() {
               ) : activePage === "Fees" ? (
                 <Fees />
               ) : activePage === "Settings" ? (
-                <Settings />
+                <Settings userId={userId} />
               ) : null
             ) : role === "staff" ? (
-              activePage === "Students" ? (
-                <Students />
-              ) : activePage === "Attendance" ? (
-                <Attendance />
+              activePage === "Attendance" ? (
+                <FacultyAttendance />
               ) : activePage === "Timetable" ? (
                 <FacultyTimetable />
               ) : activePage === "Requests" ? (
@@ -127,8 +128,8 @@ function App() {
                 <Complaints />
               ) : activePage === "Announcements" ? (
                 <Announcements />
-              ) : activePage === "Mess" ? (
-                <MessMenu />
+              ) : activePage === "Settings" ? (
+                <FacultySettings userId={userId} />
               ) : null
             ) : activePage === "Complaints" ? (
               <AdminComplaints />

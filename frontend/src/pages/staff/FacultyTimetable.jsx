@@ -1,100 +1,60 @@
+import { useEffect, useState } from "react";
+
 function FacultyTimetable() {
-  const timetable = [
-    {
-      day: "Monday",
-      classes: [
-        {
-          time: "8:15 AM - 9:10 AM",
-          subject: "Computer Networks",
-          className: "CSE-A • 5th Semester",
-          room: "Room 302",
-        },
-        {
-          time: "10:05 AM - 11:00 AM",
-          subject: "Computer Networks",
-          className: "CSE-B • 5th Semester",
-          room: "Room 305",
-        },
-        {
-          time: "11:30 AM - 1:20 PM",
-          subject: "CN Lab",
-          className: "CSE-A • 5th Semester",
-          room: "Lab 2",
-        },
-      ],
-    },
-    {
-      day: "Tuesday",
-      classes: [
-        {
-          time: "9:10 AM - 10:05 AM",
-          subject: "Computer Networks",
-          className: "CSE-A • 5th Semester",
-          room: "Room 302",
-        },
-        {
-          time: "11:30 AM - 1:20 PM",
-          subject: "CN Lab",
-          className: "CSE-B • 5th Semester",
-          room: "Lab 2",
-        },
-      ],
-    },
-    {
-      day: "Wednesday",
-      classes: [
-        {
-          time: "11:30 AM - 12:25 PM",
-          subject: "Computer Networks",
-          className: "CSE-A • 5th Semester",
-          room: "Room 302",
-        },
-        {
-          time: "2:15 PM - 3:10 PM",
-          subject: "Mentoring",
-          className: "CSE-A • 5th Semester",
-          room: "Faculty Room",
-        },
-      ],
-    },
-    {
-      day: "Thursday",
-      classes: [
-        {
-          time: "8:15 AM - 11:00 AM",
-          subject: "CN Lab",
-          className: "CSE-A • 5th Semester",
-          room: "Lab 2",
-        },
-        {
-          time: "11:30 AM - 12:25 PM",
-          subject: "Computer Networks",
-          className: "CSE-B • 5th Semester",
-          room: "Room 305",
-        },
-      ],
-    },
-    {
-      day: "Friday",
-      classes: [
-        {
-          time: "9:10 AM - 10:05 AM",
-          subject: "Computer Networks",
-          className: "CSE-A • 5th Semester",
-          room: "Room 302",
-        },
-        {
-          time: "11:30 AM - 1:20 PM",
-          subject: "CN Lab",
-          className: "CSE-B • 5th Semester",
-          room: "Lab 2",
-        },
-      ],
-    },
+  const [timetable, setTimetable] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:5000/api/timetable")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch timetable");
+        }
+
+        return response.json();
+      })
+      .then((data) => {
+        setTimetable(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError("Unable to load timetable from server.");
+        setLoading(false);
+      });
+  }, []);
+
+  const days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
   ];
+
+  if (loading) {
+    return (
+      <div className="panel">
+        <h2>Faculty Timetable</h2>
+        <p>Loading timetable...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="panel">
+        <h2>Faculty Timetable</h2>
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="timetable-page">
+      {/* HEADER */}
       <div className="panel timetable-header">
         <div>
           <h2>Faculty Timetable</h2>
@@ -104,30 +64,52 @@ function FacultyTimetable() {
         <div className="semester-badge">Faculty Schedule</div>
       </div>
 
+      {/* DAYS */}
       <div className="timetable-days">
-        {timetable.map((day) => (
-          <div className="panel timetable-day" key={day.day}>
-            <div className="timetable-day-title">
-              <h2>{day.day}</h2>
-              <span>{day.classes.length} Classes</span>
-            </div>
+        {days.map((day) => {
+          const dayClasses = timetable.filter((item) => item.day === day);
 
-            <div className="timetable-list">
-              {day.classes.map((item, index) => (
-                <div className="timetable-row" key={index}>
-                  <div className="timetable-time">{item.time}</div>
+          return (
+            <div className="panel timetable-day" key={day}>
+              <div className="timetable-day-title">
+                <h2>{day}</h2>
 
-                  <div className="timetable-subject">
-                    <strong>{item.subject}</strong>
-                    <span>
-                      {item.className} • {item.room}
-                    </span>
+                <span>
+                  {dayClasses.length}{" "}
+                  {dayClasses.length === 1 ? "Class" : "Classes"}
+                </span>
+              </div>
+
+              <div className="timetable-list">
+                {dayClasses.length === 0 ? (
+                  <div className="timetable-row">
+                    <div className="timetable-subject">
+                      <span>No classes scheduled</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ) : (
+                  dayClasses.map((item) => (
+                    <div className="timetable-row" key={item.id}>
+                      {/* TIME */}
+                      <div className="timetable-time">{item.time}</div>
+
+                      {/* SUBJECT */}
+                      <div className="timetable-subject">
+                        <strong>{item.subject}</strong>
+
+                        <span>
+                          {item.type} • {item.room}
+                        </span>
+
+                        <span>{item.professor}</span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
