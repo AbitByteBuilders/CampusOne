@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-
+import uuid
+import pyotp
 db = SQLAlchemy()
 
 class Complaint(db.Model):
@@ -112,6 +113,44 @@ class Notice(db.Model):
             # Formats the date beautifully for React (e.g., "03 Oct 2026")
             "date": self.date_posted.strftime("%d %b %Y") 
         }
+        
+# ==============================================================================
+# SESSION TRACKER: Holds the cryptographic secret for the 5-second rotating QR
+# ==============================================================================
+class ClassSession(db.Model):
+    __tablename__ = 'class_sessions'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    faculty_name = db.Column(db.String(100), nullable=False)
+    subject = db.Column(db.String(100), nullable=False)
+    session_date = db.Column(db.Date, default=date.today)
+    
+    # Generates a unique base32 secret for this specific lecture
+    totp_secret = db.Column(db.String(32), nullable=False, default=lambda: pyotp.random_base32())
+    is_active = db.Column(db.Boolean, default=True)
+
+# ==============================================================================
+# DAILY LOG: Tracks day-by-day historical records for faculty auditing
+# ==============================================================================
+class DailyAttendanceLog(db.Model):
+    __tablename__ = 'daily_attendance'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    roll_number = db.Column(db.String(20), nullable=False)
+    student_name = db.Column(db.String(100), nullable=False)
+    subject = db.Column(db.String(100), nullable=False)
+    faculty_name = db.Column(db.String(100), nullable=False)
+    date_recorded = db.Column(db.Date, default=date.today)
+    status = db.Column(db.String(20), default="Absent") # "Present" or "Absent"
+
+    def to_dict(self):
+        return {
+            "roll_number": self.roll_number,
+            "student_name": self.student_name,
+            "date": self.date_recorded.strftime("%Y-%m-%d"),
+            "status": self.status
+        }        
+
 # ==============================================================================
 # MOCK DATA SEEDER
 # ==============================================================================
